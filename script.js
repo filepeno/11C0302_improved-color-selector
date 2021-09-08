@@ -3,13 +3,6 @@
 document.addEventListener("DOMContentLoaded", start);
 
 const HTML = {};
-// const RGB = {
-//   R: "",
-//   G: "",
-//   B: "",
-// };
-
-// const colorPicker = document.querySelector("input");
 
 function start() {
   console.log("start()");
@@ -32,12 +25,19 @@ function trackColorPicker() {
   HTML.colorPicker.addEventListener("input", updateColor, false);
 }
 
+//delegator
 function updateColor() {
   const currentColorHex = HTML.colorPicker.value;
   console.log(currentColorHex);
-  getRGB(currentColorHex);
+  const valueRGB = calculateRGB(currentColorHex);
+  const valueHSL = calculateHSL(valueRGB);
+  const roundedHSL = roundHSL(valueHSL);
+  const rgbCss = getRgbCss(valueRGB);
+  console.log(rgbCss);
   displayHex(currentColorHex);
   displayColor(currentColorHex);
+  displayRGB(valueRGB);
+  displayHSL(roundedHSL);
 }
 
 function displayHex(valueHex) {
@@ -48,28 +48,27 @@ function displayColor(valueHex) {
   HTML.colorDisplay.style.background = valueHex;
 }
 
-function getRGB(value) {
+function calculateRGB(value) {
   const value1 = value.substring(1, 3);
   const value2 = value.substring(3, 5);
   const value3 = value.substring(5, 7);
-  calculateRGB(value1, value2, value3);
-}
-
-function calculateRGB(value1, value2, value3) {
   const r = parseInt("0x" + value1, 16);
   const g = parseInt("0x" + value2, 16);
   const b = parseInt("0x" + value2, 16);
-  displayRGB(r, g, b);
-  calculateHSL(r, g, b);
+  return { r, g, b };
 }
 
-function displayRGB(r, g, b) {
-  HTML.codeR.textContent = r;
-  HTML.codeG.textContent = g;
-  HTML.codeB.textContent = b;
+function displayRGB(valueRGB) {
+  HTML.codeR.textContent = valueRGB.r;
+  HTML.codeG.textContent = valueRGB.g;
+  HTML.codeB.textContent = valueRGB.b;
 }
 
-function calculateHSL(r, g, b) {
+function calculateHSL(valueRGB) {
+  let r = valueRGB.r;
+  let g = valueRGB.g;
+  let b = valueRGB.b;
+
   r /= 255;
   g /= 255;
   b /= 255;
@@ -104,18 +103,23 @@ function calculateHSL(r, g, b) {
   s *= 100;
   l *= 100;
   //   console.log("hsl(%f,%f%,%f%)", h, s, l); // just for testing
-  roundHSL(h, s, l);
+  return { h, s, l };
 }
 
-function roundHSL(h, s, l) {
-  const roundedH = Math.round(h);
-  const roundedS = Math.round(s);
-  const roundedL = Math.round(l);
-  displayHSL(roundedH, roundedS, roundedL);
+function roundHSL(hsl) {
+  const H = Math.round(hsl.h);
+  const S = Math.round(hsl.s);
+  const L = Math.round(hsl.l);
+  return { H, S, L };
 }
 
-function displayHSL(roH, roS, roL) {
-  HTML.codeH.textContent = roH;
-  HTML.codeS.textContent = roS;
-  HTML.codeL.textContent = roL;
+function displayHSL(roundedHSL) {
+  HTML.codeH.textContent = roundedHSL.H;
+  HTML.codeS.textContent = roundedHSL.S;
+  HTML.codeL.textContent = roundedHSL.L;
+}
+
+function getRgbCss(valueRGB) {
+  const rgbCss = `rgb(${valueRGB.r}, ${valueRGB.g}, ${valueRGB.b})`;
+  return rgbCss;
 }
