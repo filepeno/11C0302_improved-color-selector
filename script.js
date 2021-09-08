@@ -1,8 +1,14 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", start);
-
+const colorsArray = [];
 const HTML = {};
+const ColorCodes = {
+  hex: "",
+  rgb: "",
+  hsl: "",
+  css: "",
+};
 
 function start() {
   console.log("start()");
@@ -38,6 +44,22 @@ function updateColor() {
   displayColor(currentColorHex);
   displayRGB(valueRGB);
   displayHSL(roundedHSL);
+  const newObject = createColorCodesObject(currentColorHex, valueRGB, roundedHSL, rgbCss);
+  pushObjectToArray(newObject);
+}
+
+function createColorCodesObject(code1, code2, code3, code4) {
+  const colorObj = Object.create(ColorCodes);
+  colorObj.hex = code1;
+  colorObj.rgb = code2;
+  colorObj.hsl = code3;
+  colorObj.css = code4;
+  return colorObj;
+}
+
+function pushObjectToArray(object1) {
+  colorsArray.push(object1);
+  console.log(colorsArray);
 }
 
 function displayHex(valueHex) {
